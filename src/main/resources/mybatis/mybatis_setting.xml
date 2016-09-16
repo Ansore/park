@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--使用列标代替列名 -->
+        <setting name="useColumnLabel" value="true"/>
+        <!--允许JDBC 支持自动生成主见  -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!--开启驼峰模式 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 设置超时的时间 -->
+        <setting name="defaultStatementTimeout" value="3000"/>
+    </settings> 
+</configuration>

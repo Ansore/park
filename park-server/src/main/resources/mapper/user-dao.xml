@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="com.park.dao.UserDAO">
+
+        <insert id="addUser" parameterType="com.park.enity.User">
+                <!--<selectKey keyProperty="telephone" order="AFTER" resultType="java.lang.Integer">-->
+                        <!--SELECT LAST_INSERT_ID()-->
+                <!--</selectKey>-->
+                insert into user (telephone,password,username,palte) value (#{telephone,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR},#{palte,jdbcType=VARCHAR});
+        </insert>
+
+        <select id="userIsExist" resultType="java.lang.Integer">
+                select count(*) from user where telephone=#{telephone};
+        </select>
+        
+        <select id="userLogin" resultType="java.lang.Integer">
+                select count(*) from user where telephone=#{telephone,jdbcType=VARCHAR} and password=#{password,jdbcType=VARCHAR};
+        </select>
+
+
+</mapper>

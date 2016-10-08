@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.park.dao.ParkInfoDAO">
+    <insert id="addPark" parameterType="com.park.enity.ParkInfo">
+        insert into parkinfo (parkid,password,name,telephone) value (#{parkid},#{password},#{name},#{telephone});
+    </insert>
+    
+    <select id="parkLogin" resultType="java.lang.Integer">
+        select count(*) from parkinfo where parkid=#{parkid} and password=#{password};
+    </select>
+
+    <select id="parkIsExist" resultType="java.lang.Integer">
+        select count(*) from parkinfo where parkid=#{parkid};
+    </select>
+
+    <select id="getParksList" resultType="com.park.enity.ParkInfo">
+        select * from parkinfo;
+    </select>
+
+</mapper>

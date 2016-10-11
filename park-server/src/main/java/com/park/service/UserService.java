@@ -1,5 +1,6 @@
 package com.park.service;
 
+import com.park.enity.User;
 import com.park.vo.LoginVo;
 import com.park.vo.RegisterVo;
 
@@ -22,4 +23,11 @@ public interface UserService {
      * @return
      */
     int userLogin(LoginVo loginVo);
+
+    /**
+     * 根据手机号码获取用户信息
+     * @param telephone
+     * @return
+     */
+    User getUser(String telephone);
 }

@@ -22,6 +22,7 @@ public enum StatusEnum {
     USERISEXIST(300,"用户已存在"),
     USERREGFAILED(301,"用户注册失败"),
     USERLOGINFAILED(302,"用户名或密码错误"),
+    USERISNOEXIST(303,"获取用户失败"),
     PARKISEXIST(400,"停车场已存在"),
     PARKREGFAILED(401,"停车场注册失败"),
     PARKRLOGINFAILED(402,"用户名或密码错误")

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.park.enity.ParkInfo;
 import com.park.enity.ParkStatus;
 import com.park.util.DButil;
 
@@ -52,9 +53,7 @@ public class QueryInParkStatus implements Callable<String>{
     	try {
 			PreparedStatement pstmt=conn.prepareStatement(sql);
 			ResultSet rs=pstmt.executeQuery();
-			System.out.println("获取车位数据");
 			while(rs.next()) {
-				System.out.println("有车位数据");
 				ParkStatus parkStatus = new ParkStatus();
 				parkStatus.setId(rs.getInt("id"));
 				parkStatus.setBlank(rs.getInt("blank"));
@@ -68,7 +67,6 @@ public class QueryInParkStatus implements Callable<String>{
 		}finally{
        	 DButil.close(conn);
         }
-    	System.out.println("车位个数="+l.size());
 		return l;
 	}
 	
@@ -94,4 +92,5 @@ public class QueryInParkStatus implements Callable<String>{
         }
 		return parkStatus;
 	}
+
 }

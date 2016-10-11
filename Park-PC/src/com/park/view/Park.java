@@ -1,26 +1,26 @@
 package com.park.view;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 
+import com.park.coclient.ConClient;
+import com.park.db.QueryInParkStatus;
+import com.park.enity.ParkStatus;
 import com.park.view.listener.ParkActionListener;
 
 /**
@@ -29,7 +29,7 @@ import com.park.view.listener.ParkActionListener;
  *
  */
 
-public class Park extends JFrame {
+public class Park extends JFrame implements Runnable {
 	 
 	JButton openButton;
 	JButton closingButton;
@@ -59,8 +59,21 @@ public class Park extends JFrame {
 	ParkActionListener parkActionListener;
 	
 	
+	// 获取日志Panel
+	public DailyRecordView getDailyPanel() {
+		return dailyPanel;
+	}
+	
+	
+
+	public JPanel getStatePanel() {
+		return statePanel;
+	}
+
 	public static void main(String[] args){
 		park = new Park();
+		new Thread(park).start();
+		new ConClient().start(); 
 	}
 	
 	
@@ -164,71 +177,7 @@ public class Park extends JFrame {
 		//statePanel.add(jPanel);
 		dailyPanel=new DailyRecordView();
 		
-		//向车位状态面板中添加了八个车位
-		int m=0;
-		for (int i = 0; i < 8; i++) {
-			
-			JPanel theCarPanel=new JPanel();//车位总面板
-			theCarPanel.setLayout(null);
-			theCarPanel.setBounds(m,0,220,275);//255
-			theCarPanel.setBackground(new Color(225,215,0));
-			
-			//顶部显示车位序号的标签
-			JLabel textJlJLabel=new JLabel("车位编号",SwingConstants.CENTER);//用来显示每个车位的编号
-			textJlJLabel.setSize(220, 30);
-			textJlJLabel.setOpaque(true);//设置颜色可见
-			textJlJLabel.setBackground(Color.white);
-			
-			//中间显示车位状态的图片
-			JLabel pictureJLabel=new JLabel();
-			pictureJLabel.setBounds(0,30,220, 150);
-			pictureJLabel.setOpaque(true);
-			pictureJLabel.setBackground(Color.white);
-			pictureJLabel.setIcon(new ImageIcon("image//车位黑白.png"));//锁定和未锁定显示不同的照片，照片在image中获取
-		
-			
-			//车牌号码标签设置显示
-			JLabel numLabel=new JLabel("车牌号码:");
-			numLabel.setBounds(0,180,60,25);
-			numLabel.setOpaque(true);
-			numLabel.setForeground(Color.white);
-			numLabel.setBackground(new Color(225,215,0));
-
-			//标签设置显示
-			JLabel numTextJLabel=new JLabel();//用来显示停入车位的车的车牌号码
-			numTextJLabel.setOpaque(true);
-			numTextJLabel.setForeground(Color.white);
-			numTextJLabel.setBackground(new Color(225,215,0));
-			numTextJLabel.setBounds(60,180,160,25);
-			
-			//标签设置显示
-			JLabel timeLabel=new JLabel("停车时长:");
-			timeLabel.setBounds(0, 205, 60, 25);
-			timeLabel.setOpaque(true);
-			timeLabel.setForeground(Color.white);
-			timeLabel.setBackground(new Color(5,10,10));
-			timeLabel.setOpaque(true);
-			
-			//标签设置显示
-			JLabel timeTextJLabel=new JLabel();//用来显示停入车辆的停车时间
-			timeTextJLabel.setBounds(60, 205, 160, 25);
-			timeTextJLabel.setOpaque(true);
-			timeTextJLabel.setForeground(Color.white);
-			timeTextJLabel.setBackground(new Color(5,10,10));
-			
-
-			//向总面板上添加组件
-			
-			theCarPanel.add(textJlJLabel);
-			theCarPanel.add(pictureJLabel);
-			theCarPanel.add(numLabel);
-			theCarPanel.add(numTextJLabel);
-			theCarPanel.add(timeLabel);
-			theCarPanel.add(timeTextJLabel);
-			statePanel.add(theCarPanel);
-			m=m+220;
-			
-		}
+		//TODO 添加面板
 		//dailyPanel.setBackground(new Color(5,10,10));
 		
 		
@@ -361,5 +310,37 @@ public class Park extends JFrame {
 				s.weightx = 1;
 				s.weighty=1;
 				layout.setConstraints(cardPanel, s);
+	}
+
+	
+	Runnable runnable =new Runnable() {
+		
+		@Override
+		public void run() {
+			Park.park.getStatePanel().removeAll();
+			List<ParkStatus> l = new QueryInParkStatus().callAll();
+			int location = 10;
+			for(int i = 0; i < l.size(); i++) {
+				ParkStatuView p = new ParkStatuView(location,l.get(i));
+				Park.park.getStatePanel().add(p);
+				location = location + 230;
+			}
+		}
+	};
+	
+	@Override
+	public void run() {
+		
+		while(true){
+			try {
+				SwingUtilities.invokeLater(runnable);
+				Thread.sleep(2000);
+				Park.park.getStatePanel().repaint();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 }

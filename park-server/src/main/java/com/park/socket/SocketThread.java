@@ -72,6 +72,10 @@ public class SocketThread extends Thread {
         return message1;
     }
 
+    public void freeMessage() {
+        this.info = null;
+    }
+
     @Override
     public void run() {
 
@@ -88,7 +92,6 @@ public class SocketThread extends Thread {
                         this.info = m;
                         break;
                 }
-
 
             } catch (Exception e) {
                 try {

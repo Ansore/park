@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 import com.park.tools.ThreadManage;
+import com.park.view.Park;
 
 /**
  * 链接硬件
@@ -31,7 +33,7 @@ public class ConClient extends Thread{
     	
     	System.out.println("监听10000端口");
     	try {
-    		
+    		Park.park.getDailyPanel().getText().append(new Date()+":端口开放，等待硬件链接\n");
 			Socket socket=serverSocket.accept();
 			System.out.println("有链接");
 			

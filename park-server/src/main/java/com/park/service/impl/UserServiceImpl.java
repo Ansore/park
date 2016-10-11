@@ -63,4 +63,14 @@ public class UserServiceImpl implements UserService {
         }
         return result;
     }
+
+    @Override
+    public User getUser(String telephone) {
+        User user= null;
+        user = userDAO.getUser(telephone);
+        if(user == null) {
+            throw new ParkException(StatusEnum.getStatusCode(303));
+        }
+        return user;
+    }
 }

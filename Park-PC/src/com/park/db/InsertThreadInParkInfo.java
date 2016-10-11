@@ -20,7 +20,7 @@ public class InsertThreadInParkInfo extends Thread{
 	}
 	
 	public void run(){
-		String sql="insert into parkinfo(parkId,palte,telephone,statu) values(?,?,?,?)";
+		String sql="insert into parkinfo(parkid,palte,telephone,statu) values(?,?,?,?)";
 		Connection conn=DButil.open();
 		try {
 			PreparedStatement pstmt=conn.prepareStatement(sql);

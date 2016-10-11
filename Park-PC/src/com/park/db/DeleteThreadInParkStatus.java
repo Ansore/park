@@ -18,7 +18,7 @@ public class DeleteThreadInParkStatus  extends Thread{
 		Connection conn=DButil.open();
 		 try{
 			 
-		    String sql = "delete from Parkstatus where id=?";
+		    String sql = "delete from parkstatus where id=?";
 		    PreparedStatement pstmt = conn.prepareStatement(sql);
 		    pstmt.setInt(1, id);
 		    int num =pstmt.executeUpdate();

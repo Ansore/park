@@ -5,16 +5,15 @@ import com.park.dto.Message;
 import com.park.dto.Result;
 import com.park.enity.OrderInfo;
 import com.park.enity.ParkInfo;
+import com.park.enity.User;
 import com.park.exception.ParkException;
 import com.park.exception.StatusEnum;
 import com.park.service.ParkService;
 import com.park.service.UserService;
-import com.park.socket.SocketThread;
 import com.park.socketmanage.SocketThreadManage;
 import com.park.vo.LoginVo;
 import com.park.vo.RegisterVo;
 import com.park.vo.RequestVo;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -156,6 +155,9 @@ public class PhoneController {
                 result.setStatus(true);
                 result.setStatusInfo(StatusEnum.getStatusCode(202).getStatusInfo());
                 result.setData(m.getParkList());
+
+                //释放线程Message对象
+                SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
             }
 
             /**
@@ -178,12 +180,13 @@ public class PhoneController {
                     result.setStatusInfo(StatusEnum.getStatusCode(106).getStatusInfo());
                     return result;
                 }
-
                 Message message = new Message();
                 message.setMessageType(Data.OrderInfo);
                 message.setParkId(requestVo.getSpaceId());
                 message.setTelephone(requestVo.getTelephone());
-                message.setPalte(requestVo.getPalte());
+                User user = userService.getUser(requestVo.getTelephone());
+                message.setPalte(user.getPalte());
+                message.setUserName(user.getUsername());
                 Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
                 if(m==null||m.getStatu()!=true) {
                     result.setStatusInfo(StatusEnum.getStatusCode(105).getStatusInfo());
@@ -196,6 +199,8 @@ public class PhoneController {
                 orderInfoDAO.addOrderInfo(orderInfo);
                 result.setStatus(true);
                 result.setStatusInfo(StatusEnum.getStatusCode(205).getStatusInfo());
+                //释放线程Message对象
+                SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
             }
 
             /**
@@ -227,7 +232,6 @@ public class PhoneController {
                 Message m = SocketThreadManage.socketThread.get(parkid).sendMessageWait(message);
 
                 if(m==null||m.getStatu()!=true) {
-                    System.out.println("Message有错2");
                     result.setStatusInfo(StatusEnum.getStatusCode(105).getStatusInfo());
                     return result;
                 }
@@ -242,6 +246,8 @@ public class PhoneController {
                 result.setParkName(m.getParkName());
                 result.setLotId(m.getParkId());
                 result.setStatusInfo(StatusEnum.getStatusCode(205).getStatusInfo());
+                //释放线程Message对象
+                SocketThreadManage.socketThread.get(parkid).freeMessage();
             }
 
             /**
@@ -355,7 +361,8 @@ public class PhoneController {
                 result.setStatus(true);
                 result.setPayNum(m.getPayNum());
                 result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
-
+                //释放线程Message对象
+                SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
             }
 
             /**

@@ -48,7 +48,10 @@ public class DailyRecordView extends JPanel{
 	//显示日志面板
 	JTextArea text=new JTextArea();
 	
-	
+	public JTextArea getText() {
+		return text;
+	}
+
 	public DailyRecordView ()
 	{
 			this.setBackground(Color.BLACK);//设置面板颜色为黑色

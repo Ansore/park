@@ -31,5 +31,6 @@ public interface UserDAO {
      */
     int userLogin(@Param("telephone") String telephone,@Param("password") String password);
 
+    User getUser(@Param("telephone") String telephone);
 
 }

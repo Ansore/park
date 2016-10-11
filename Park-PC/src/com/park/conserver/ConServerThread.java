@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import com.park.data.Data;
@@ -14,6 +15,8 @@ import com.park.db.InsertThreadInParkInfo;
 import com.park.db.QueryInParkInfo;
 import com.park.db.QueryInParkStatus;
 import com.park.db.QueryTimestampOnly;
+import com.park.db.UpdateInParkStatusLockedOnly;
+import com.park.db.UpdateThreadParkStatusOrder;
 import com.park.dto.Message;
 import com.park.enity.ParkStatus;
 import com.park.tools.ThreadManage;
@@ -35,7 +38,7 @@ public class ConServerThread extends Thread {
 			this.oos = new ObjectOutputStream(this.socket.getOutputStream());
 			ois = new ObjectInputStream(this.socket.getInputStream());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 	
@@ -45,38 +48,9 @@ public class ConServerThread extends Thread {
 			this.oos.flush();
 			System.out.println("发送信息成功");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-//	public void SendMessageWait(Message message){
-//			try {
-//				oos.writeObject(message);
-//				System.out.println("发送信息成功");
-//				oos.flush();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			int i=0;
-//			while(i<10) {
-//				System.out.println("循环读取");
-//				if(info!=null){
-//				if(info.getMessageType()==Data.Answer) {
-//					System.out.println("跳出循环："+info.getMessageType());
-//					break;
-//				}}
-//				i++;
-//				try {
-//					Thread.sleep(300);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			System.out.println("接收到信息了："+info.getMessageType());
-//	}
 	
 	@Override
 	public void run() {
@@ -87,6 +61,7 @@ public class ConServerThread extends Thread {
 			try {
 				Message message = (Message) this.ois.readObject();
 				switch(message.getMessageType()) {
+				
 				//获取车位信息处理
 				case Data.GetParkInfo:
 					List<ParkStatus> l = new QueryInParkStatus().callAll();
@@ -102,14 +77,18 @@ public class ConServerThread extends Thread {
 						message2.setStatu(false);
 					}
 					else {
-						QueryTimestampOnly queryThread1=new QueryTimestampOnly(1);
+						QueryTimestampOnly queryThread1=new QueryTimestampOnly(message.getParkId());
 					 	Timestamp timestamp=queryThread1.call();
-					 	
+					 	System.out.println("传入停车场ID为："+message.getParkId());
 					 	if(timestamp!=null){
-					 	System.out.println(timestamp);}
+					 	System.out.println(timestamp);
+					 	}
+					 	//更改车位状态
+					 	new UpdateInParkStatusLockedOnly(message.getParkId(), 0).start();
+					 	new UpdateThreadParkStatusOrder(message.getParkId(),0).start();
 					 	//删除停车信息表信息
-					 	new DeleteThreadInParkInfo(message.getParkId());
-					 	
+					 	new DeleteThreadInParkInfo(message.getParkId()).start();
+					 	Park.park.getDailyPanel().getText().append(new Date()+":车位号："+message.getParkId()+" 已结束停车\n");
 						//计算时间
 						long minutes=new TimeMinus().minus(timestamp);
 						message2.setStatu(true);
@@ -124,7 +103,13 @@ public class ConServerThread extends Thread {
 				//处理预约信息
 				case Data.OrderInfo:
 					Message message3 = new Message();
+					Park.park.getDailyPanel().getText().append(new Date()+":有客户预约了"+message.getParkId()+"号车位\n");
+					//添加预约信息
 					new InsertThreadInParkInfo(message.getParkId(), message.getPalte(), message.getTelephone(), 0).start();
+					//更改车位状态
+					new UpdateInParkStatusLockedOnly(message.getParkId(), 1).start();
+					new UpdateThreadParkStatusOrder(message.getParkId(),1).start();
+					
 					message3.setMessageType(Data.Answer);
 					message3.setStatu(true);
 					SendMessage(message3);
@@ -149,6 +134,8 @@ public class ConServerThread extends Thread {
 					System.out.println("断开服务器");
 					ThreadManage.ServerThread.remove("server");
 					Park.park.getDisplayLabel().setText("断开服务器");
+					//打印日志
+					Park.park.getDailyPanel().getText().append(new Date()+":断开服务器\n");
 					e.printStackTrace();
 					this.socket.close();
 				} catch (Exception e1) {

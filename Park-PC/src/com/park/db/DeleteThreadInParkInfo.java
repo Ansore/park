@@ -16,7 +16,7 @@ public class DeleteThreadInParkInfo extends Thread {
 	public void run(){
 		Connection conn=DButil.open();
 		 try{
-			    String sql = "delete from Parkinfo where parkId=?";
+			    String sql = "delete from parkinfo where parkid=?";
 			    PreparedStatement pstmt = conn.prepareStatement(sql);
 			    pstmt.setInt(1, parkId);
 		    int num =pstmt.executeUpdate();
@@ -28,6 +28,5 @@ public class DeleteThreadInParkInfo extends Thread {
 		    }finally{
 	        	 DButil.close(conn);
 	         }
-		 
 	}
 }

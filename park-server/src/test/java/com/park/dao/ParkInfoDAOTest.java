@@ -34,10 +34,6 @@
 //        p.setPassword("123");
 //
 //        int i = parkInfoDAO.addPark(p);
-
-
-
-
 //
 //        logger.info("Result={}",i);
 //    }

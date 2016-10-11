@@ -23,8 +23,10 @@ com/park/service/UserService.class
 com/park/vo/EndParkVo.class
 com/park/vo/LoginVo.class
 com/park/vo/CommonVo.class
+com/park/dao/OrderInfoDAO.class
 com/park/dto/Message.class
 com/park/socket/SocketThread.class
 com/park/vo/GetLotInfoVo.class
+com/park/enity/OrderInfo.class
 com/park/socket/ServerSocketThread.class
 com/park/vo/OrderParkVo.class

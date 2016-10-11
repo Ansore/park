@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Date;
 
 import com.park.data.Data;
 import com.park.data.ParkData;
 import com.park.dto.Message;
 import com.park.tools.ThreadManage;
+import com.park.view.Park;
 
 public class ConServer {
 	
@@ -55,6 +57,7 @@ public class ConServer {
 					//登录成功保持链接
 					result = true;
 					System.out.println("登录成功");
+					Park.park.getDailyPanel().getText().append(new Date().getTime()+"  登陆成功\n");
 					ParkData.ParkName = message.getParkName();
 					ConServerThread conServerThread = new ConServerThread(socket);
 					conServerThread.start();
@@ -62,6 +65,7 @@ public class ConServer {
 				}
 				else {
 					System.out.println("登录失败");
+					Park.park.getDailyPanel().getText().append(new Date().getTime()+"  登陆失败\n");
 					result = false;
 					//断开链接
 					if(oos!=null) oos.close();

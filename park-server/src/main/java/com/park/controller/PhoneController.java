@@ -267,7 +267,7 @@ public class PhoneController {
                 }
 
                 Message message = new Message();
-                message.setMessageType(Data.Lock);
+                message.setMessageType(Data.Unlock);
                 message.setParkId(0);
                 SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessage(message);
                 result.setStatus(true);
@@ -369,7 +369,6 @@ public class PhoneController {
              * 模拟支付
              */
             if(requestVo.getAction().equals(Data.PayMoney)) {
-
                 //支付确认
                 result.setStatus(true);
                 result.setStatusInfo(StatusEnum.getStatusCode(203).getStatusInfo());

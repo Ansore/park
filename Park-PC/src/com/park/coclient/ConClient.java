@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
+import com.park.data.ParkData;
 import com.park.tools.ThreadManage;
 import com.park.view.Park;
 
@@ -40,8 +41,11 @@ public class ConClient extends Thread{
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String name = br.readLine().trim();
 			System.out.println("第一次收到数据为："+name);
-			
+			Park.park.getDailyPanel().getText().append(new Date()+":设备 "+name+" 已经链接\n");
 			ConClientThread clientThread=new ConClientThread(socket,name);
+			//TODO
+			ParkData.HardWare = name;
+			
 			ThreadManage.ClientThread.put(name, clientThread);
 			clientThread.start();
 			

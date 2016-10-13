@@ -17,5 +17,7 @@
                 select count(*) from user where telephone=#{telephone,jdbcType=VARCHAR} and password=#{password,jdbcType=VARCHAR};
         </select>
 
-
+        <select id="getUser" resultType="com.park.enity.User">
+                select * from user where telephone=#{telephone,jdbcType=VARCHAR};
+        </select>
 </mapper>

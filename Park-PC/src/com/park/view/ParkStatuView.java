@@ -41,16 +41,16 @@ public class ParkStatuView extends JPanel {
 			pictureJLabel.setOpaque(true);
 			pictureJLabel.setBackground(Color.white);
 			//锁定和未锁定显示不同的照片，照片在image中获取
-			if(parkStatus.getOrdered()==1) {
+			if(parkStatus.getOrdered()==1||parkStatus.getBlank()==1||parkStatus.getLocked()==1) {
 				parkInfo=new QueryInParkInfo().getParkInfo(parkStatus.getId());
-			 	minutes=new TimeMinus().minus(parkInfo.getStarttime());
+				if(parkInfo!=null){
+					minutes=new TimeMinus().minus(parkInfo.getStarttime());
+				}
 				pictureJLabel.setIcon(new ImageIcon("image//车位黑白.png"));
 			}
 			else {
 				pictureJLabel.setIcon(new ImageIcon("image//车位黄黑.png"));
 			}
-			
-		
 			
 			//车牌号码标签设置显示
 			JLabel numLabel=new JLabel("状态：");
@@ -68,7 +68,7 @@ public class ParkStatuView extends JPanel {
 				numTextJLabel.setText("已预约");
 			} else {
 				numTextJLabel.setText("空闲");
-			}
+			} 
 			numTextJLabel.setOpaque(true);
 			numTextJLabel.setForeground(Color.white);
 			numTextJLabel.setBackground(new Color(5,10,10));
@@ -127,7 +127,7 @@ public class ParkStatuView extends JPanel {
 			
 			//标签设置显示
 			JLabel timeTextJLabel=new JLabel();
-			if(parkStatus.getOrdered()==1&&parkInfo!=null&&minutes!=0) {
+			if(parkStatus.getOrdered()==1&&parkInfo!=null) {
 				timeTextJLabel.setText(minutes+" 分钟");
 			}
 			else {

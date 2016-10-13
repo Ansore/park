@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import com.park.coclient.ConClientThread;
 import com.park.data.Data;
 import com.park.data.ParkData;
 import com.park.db.DeleteThreadInParkInfo;
@@ -70,6 +71,7 @@ public class ConServerThread extends Thread {
 					m.setParkList(l);
 					SendMessage(m);
 					break;
+					
 				//结束停车
 				case Data.EndParkInfo:
 					Message message2 = new Message();
@@ -97,6 +99,8 @@ public class ConServerThread extends Thread {
 						message2.setPayNum((double)(minutes*1.0/60)*ParkData.ParkNum);
 						System.out.println("结束停车,费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum);
 						SendMessage(message2);
+						if(ThreadManage.ClientThread.size()!=0)
+						ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 0");
 					}
 					break;
 
@@ -109,6 +113,9 @@ public class ConServerThread extends Thread {
 					//更改车位状态
 					new UpdateInParkStatusLockedOnly(message.getParkId(), 1).start();
 					new UpdateThreadParkStatusOrder(message.getParkId(),1).start();
+					
+					if(ThreadManage.ClientThread.size()!=0)
+					ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 1");
 					
 					message3.setMessageType(Data.Answer);
 					message3.setStatu(true);
@@ -124,6 +131,24 @@ public class ConServerThread extends Thread {
 					System.out.println("停车场ming:"+ParkData.ParkName+"   jijji："+new QueryInParkInfo().getParkIdCall(message.getTelephone()));
 					message4.setStatu(true);
 					SendMessage(message4);
+					break;
+					
+				//锁
+				case Data.Lock:
+					if(ThreadManage.ClientThread.size()!=0)
+					ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 1");
+					break;
+					
+				//解锁
+				case Data.Unlock:
+					if(ThreadManage.ClientThread.size()!=0) {
+						if(message.getParkId()==0) {
+							ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay main 1");
+						}
+						else {
+							ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 0");
+						}
+					}
 					break;
 				}
 				

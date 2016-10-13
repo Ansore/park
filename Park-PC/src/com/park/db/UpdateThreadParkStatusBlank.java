@@ -17,7 +17,7 @@ public class UpdateThreadParkStatusBlank extends Thread {
 		Connection conn=null;
         try{
            conn = DButil.open();
-             String sql = "update parkstatus set locked=?,ordered=?,blank=? where id=?";
+             String sql = "update parkstatus set blank=? where id=?";
              PreparedStatement pstmt = conn.prepareStatement(sql);
              pstmt.setInt(1, blank);
              pstmt.setInt(2, id);

@@ -6,8 +6,9 @@ public class ParkInfo {
 	
 	private int parkid;
 	private String plate;
-	private String telephone;
 	private Timestamp starttime;
+	private String telephone;
+	
 	public int getParkid() {
 		return parkid;
 	}

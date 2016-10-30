@@ -9,7 +9,9 @@ import javax.swing.JPanel;
 import com.park.data.Data;
 import com.park.dto.Message;
 import com.park.tools.ThreadManage;
+import com.park.view.EndPark;
 import com.park.view.Login;
+import com.park.view.ParkForm;
 
 
 
@@ -42,7 +44,6 @@ public class ParkActionListener implements java.awt.event.ActionListener {
 		if(e.getActionCommand().equals("parkDailyButton")){
 			((CardLayout) cardLayout.getLayout()).show(cardLayout, "dailyPanel");
 		}
-		
 		//登录服务器按钮监听事件响应
 		if(e.getActionCommand().equals("enterButton")) {
 			System.out.println(ThreadManage.ServerThread.size());
@@ -54,7 +55,15 @@ public class ParkActionListener implements java.awt.event.ActionListener {
 				return;
 			}
 		}
+		//停车表单填写
+		if(e.getActionCommand().equals("noBookkingButton")) {
+			new ParkForm();
+		}
 		
+		//结束停车
+		if(e.getActionCommand().equals("endPark")) {
+			new EndPark();
+		}
 	}
 
 }

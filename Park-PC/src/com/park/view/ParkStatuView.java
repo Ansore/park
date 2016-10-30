@@ -41,15 +41,15 @@ public class ParkStatuView extends JPanel {
 			pictureJLabel.setOpaque(true);
 			pictureJLabel.setBackground(Color.white);
 			//锁定和未锁定显示不同的照片，照片在image中获取
-			if(parkStatus.getOrdered()==1||parkStatus.getBlank()==1||parkStatus.getLocked()==1) {
+			if(parkStatus.getOrdered()==1) {
 				parkInfo=new QueryInParkInfo().getParkInfo(parkStatus.getId());
 				if(parkInfo!=null){
 					minutes=new TimeMinus().minus(parkInfo.getStarttime());
 				}
-				pictureJLabel.setIcon(new ImageIcon("image//车位黑白.png"));
+				pictureJLabel.setIcon(new ImageIcon(getClass().getResource("/image/车位黑白.png")));
 			}
 			else {
-				pictureJLabel.setIcon(new ImageIcon("image//车位黄黑.png"));
+				pictureJLabel.setIcon(new ImageIcon(getClass().getResource("/image/车位黄黑.png")));
 			}
 			
 			//车牌号码标签设置显示
@@ -66,9 +66,11 @@ public class ParkStatuView extends JPanel {
 			}
 			else if(parkStatus.getOrdered()==1&&parkStatus.getBlank()==0) {
 				numTextJLabel.setText("已预约");
+			} else if(parkStatus.getOrdered()==0&&parkStatus.getBlank()==1){
+				numTextJLabel.setText("车位状态异常");
 			} else {
 				numTextJLabel.setText("空闲");
-			} 
+			}
 			numTextJLabel.setOpaque(true);
 			numTextJLabel.setForeground(Color.white);
 			numTextJLabel.setBackground(new Color(5,10,10));
@@ -88,7 +90,7 @@ public class ParkStatuView extends JPanel {
 				plate.setText(parkInfo.getPlate());
 			}
 			else {
-				plate.setText("null");
+				plate.setText("无");
 			}
 			plate.setBounds(60, 205, 160, 25);
 			plate.setOpaque(true);
@@ -109,7 +111,7 @@ public class ParkStatuView extends JPanel {
 				phoneNum.setText(parkInfo.getTelephone());
 			}
 			else {
-				phoneNum.setText("null");
+				phoneNum.setText("无");
 			}
 			phoneNum.setBounds(60, 230, 160, 25);
 			phoneNum.setOpaque(true);
@@ -127,11 +129,11 @@ public class ParkStatuView extends JPanel {
 			
 			//标签设置显示
 			JLabel timeTextJLabel=new JLabel();
-			if(parkStatus.getOrdered()==1&&parkInfo!=null) {
+			if((parkStatus.getBlank()==1||parkStatus.getOrdered()==1)&&parkInfo!=null) {
 				timeTextJLabel.setText(minutes+" 分钟");
 			}
 			else {
-				timeTextJLabel.setText("null");
+				timeTextJLabel.setText("无");
 			}
 			timeTextJLabel.setBounds(60, 255, 160, 25);
 			timeTextJLabel.setOpaque(true);

@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.park.coclient.ConClientThread;
 import com.park.data.Data;
 import com.park.data.ParkData;
@@ -77,11 +79,11 @@ public class ConServerThread extends Thread {
 					Message message2 = new Message();
 					if(new QueryInParkStatus().callParkStatus().getBlank()==1) {
 						message2.setStatu(false);
+						SendMessage(message2);
 					}
 					else {
 						QueryTimestampOnly queryThread1=new QueryTimestampOnly(message.getParkId());
 					 	Timestamp timestamp=queryThread1.call();
-					 	System.out.println("传入停车场ID为："+message.getParkId());
 					 	if(timestamp!=null){
 					 	System.out.println(timestamp);
 					 	}
@@ -90,7 +92,6 @@ public class ConServerThread extends Thread {
 					 	new UpdateThreadParkStatusOrder(message.getParkId(),0).start();
 					 	//删除停车信息表信息
 					 	new DeleteThreadInParkInfo(message.getParkId()).start();
-					 	Park.park.getDailyPanel().getText().append(new Date()+":车位号："+message.getParkId()+" 已结束停车\n");
 						//计算时间
 						long minutes=new TimeMinus().minus(timestamp);
 						message2.setStatu(true);
@@ -98,16 +99,17 @@ public class ConServerThread extends Thread {
 						System.out.println("停车时间为："+minutes);
 						message2.setPayNum((double)(minutes*1.0/60)*ParkData.ParkNum);
 						System.out.println("结束停车,费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum);
+						JOptionPane.showMessageDialog(null,"车位号："+message.getParkId()+" 已结束停车 停车费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum+"元\n", "停车结束",  JOptionPane.YES_OPTION); 
+					 	Park.park.getDailyPanel().getText().append(new Date()+":车位号："+message.getParkId()+" 已结束停车 停车费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum+"元\n");
 						SendMessage(message2);
 						if(ThreadManage.ClientThread.size()!=0)
 						ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 0");
 					}
 					break;
-
 				//处理预约信息
 				case Data.OrderInfo:
 					Message message3 = new Message();
-					Park.park.getDailyPanel().getText().append(new Date()+":有客户预约了"+message.getParkId()+"号车位\n");
+					Park.park.getDailyPanel().getText().append(new Date()+":车牌号： "+message.getPalte()+" 预约了"+message.getParkId()+"号车位\n");
 					//添加预约信息
 					new InsertThreadInParkInfo(message.getParkId(), message.getPalte(), message.getTelephone(), 0).start();
 					//更改车位状态
@@ -121,7 +123,6 @@ public class ConServerThread extends Thread {
 					message3.setStatu(true);
 					SendMessage(message3);
 					break;
-				
 				//处理获取预约信息
 				case Data.GetOrderInfoPC:
 					Message message4 = new Message();

@@ -12,7 +12,7 @@ public class DeleteThreadInParkInfo extends Thread {
 	public DeleteThreadInParkInfo(int ParkId){
 		this.parkId=ParkId;
 	}
-	
+	//车位预定信息
 	public void run(){
 		Connection conn=DButil.open();
 		 try{

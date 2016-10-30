@@ -8,14 +8,10 @@ import com.park.util.DButil;
 
 public class UpdateThreadInParkInfo extends Thread{
 
-	int parkId;
-	String palte;
-	String telephone;
+	int parkid;
 	int statu;
-	public UpdateThreadInParkInfo(int ParkId,String Palte,String Telephone,int Statu){
-		this.parkId=ParkId;
-		this.palte=Palte;
-		this.telephone=Telephone;
+	public UpdateThreadInParkInfo(int ParkId,int Statu){
+		this.parkid=ParkId;
 		this.statu=Statu;
 	}
 	
@@ -27,7 +23,7 @@ public class UpdateThreadInParkInfo extends Thread{
 		Connection conn=null;
         try{
            conn = DButil.open();
-             String sql = "update parkinfo set statu=? where parkId=?";
+             String sql = "update parkinfo set statu=? where parkid=?";
              PreparedStatement pstmt = conn.prepareStatement(sql);
            
  			pstmt.setInt(1,sta);
@@ -50,13 +46,11 @@ public class UpdateThreadInParkInfo extends Thread{
         try{
        	
            conn = DButil.open();
-             String sql = "update parkinfo set palte=?,telephone=?,statu=? where parkId=?";
+             String sql = "update parkinfo set statu=? where parkid=?";
              PreparedStatement pstmt = conn.prepareStatement(sql);
            
- 			pstmt.setString(1,palte);
- 			pstmt.setString(2,telephone);
- 			pstmt.setInt(3,statu);
- 			pstmt.setInt(4,parkId);
+ 			pstmt.setInt(1,statu);
+ 			pstmt.setInt(2,parkid);
              int num = pstmt.executeUpdate();
              if(num>0){
                  System.out.println("更新停车信息成功！！！");

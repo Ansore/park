@@ -284,7 +284,6 @@ public class PhoneController {
                     result.setStatusInfo(StatusEnum.getStatusCode(102).getStatusInfo());
                     return result;
                 }
-
                 //发送控制信息给PC
                 if(SocketThreadManage.socketThread.get(requestVo.getParkId())!=null) {
                     Message message = new Message();
@@ -299,7 +298,6 @@ public class PhoneController {
                     return result;
                 }
             }
-
             /**
              * 锁定车位
              */
@@ -328,8 +326,6 @@ public class PhoneController {
                     result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
                     return result;
                 }
-
-
             }
 
             /**
@@ -374,8 +370,6 @@ public class PhoneController {
                 result.setStatusInfo(StatusEnum.getStatusCode(203).getStatusInfo());
 
             }
-
-
         } catch (ParkException pe) {
 
             result.setStatusInfo(pe.getStatusInfo());

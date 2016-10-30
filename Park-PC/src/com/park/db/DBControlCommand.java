@@ -15,22 +15,9 @@ import com.park.util.DButil;
 
 
 public class DBControlCommand {
-
-	public static void main(String[] args) {
-		
-		
-		DBControlCommand dbc=new DBControlCommand();
-		dbc.insertInParkstatus(2, 1, 1, 1);
-		Timestamp ts=new Timestamp(System.currentTimeMillis());
-		System.out.println(ts);	
-		dbc.insertInParkinfo(1, "沪A5D815","13601992766", 1);
-		//dbc.updateInParkstatus(1, 0);
-		//dbc.updateInParkinfo(2,"990","33241",0,ts);
-
-        dbc.queryInParkinfo();
-
-	}
-	public void insertInParkstatus(int id,int locked,int ordered,int blank){//parkstatus表的插入
+	
+	//添加车位状态
+	public void insertInParkstatus(int id,int locked,int ordered,int blank){
 		String sql="insert into parkstatus(id,locked,ordered,blank) values(?,?,?,?)";
 		Connection conn=DButil.open();
 		try {

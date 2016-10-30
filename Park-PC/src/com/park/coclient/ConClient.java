@@ -31,10 +31,8 @@ public class ConClient extends Thread{
     }
     public void run(){
     	while(true){
-    	
-    	System.out.println("监听10000端口");
     	try {
-    		Park.park.getDailyPanel().getText().append(new Date()+":端口开放，等待硬件链接\n");
+    		Park.park.getDailyPanel().getText().append(new Date().toLocaleString()+": 等待设备链接\n");
 			Socket socket=serverSocket.accept();
 			System.out.println("有链接");
 			
@@ -48,16 +46,6 @@ public class ConClient extends Thread{
 			
 			ThreadManage.ClientThread.put(name, clientThread);
 			clientThread.start();
-			
-//		    ConClient.sleep(50);
-//			HashMapData.conClient.get("k").SenderMessages("control relay 1 0");
-//			ConClient.sleep(50);
-//			HashMapData.conClient.get("k").SenderMessages("control relay 2 0");
-//			ConClient.sleep(50);
-//		    HashMapData.conClient.get("k").SenderMessages("control relay 3 0");
-//		    ConClient.sleep(50);
-//			HashMapData.conClient.get("k").SenderMessages("control relay main 0");
-//			HashMapData.conClient.get("k").SenderMessages("getinfo");
 		
 			
 		} catch (IOException e) {

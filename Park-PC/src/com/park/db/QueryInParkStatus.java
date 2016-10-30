@@ -71,7 +71,7 @@ public class QueryInParkStatus implements Callable<String>{
 	}
 	
 	public ParkStatus callParkStatus() {
-		ParkStatus parkStatus = new ParkStatus();
+		ParkStatus parkStatus = null;
 		Connection conn=DButil.open();
     	String sql="select * from parkstatus where id=?";
     	try {
@@ -79,6 +79,7 @@ public class QueryInParkStatus implements Callable<String>{
 			pstmt.setInt(1, ID);
 			ResultSet rs=pstmt.executeQuery();
 			while(rs.next()) {
+				parkStatus = new ParkStatus();
 				parkStatus.setId(rs.getInt("id"));
 				parkStatus.setBlank(rs.getInt("blank"));
 				parkStatus.setLocked(rs.getInt("locked"));

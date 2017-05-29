@@ -26,7 +26,7 @@ public class QueryInParkStatus implements Callable<String>{
 	
 	public String call(){
 		Connection conn=DButil.open();
-    	String sql="select *from parkstatus where id=?";
+    	String sql="select * from parkstatus where id=?";
     	try {
 			PreparedStatement pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, ID);
@@ -49,7 +49,7 @@ public class QueryInParkStatus implements Callable<String>{
 	public List<ParkStatus> callAll() {
 		List<ParkStatus> l = new ArrayList<>();
 		Connection conn=DButil.open();
-    	String sql="select *from parkstatus";
+    	String sql="select * from parkstatus";
     	try {
 			PreparedStatement pstmt=conn.prepareStatement(sql);
 			ResultSet rs=pstmt.executeQuery();
@@ -78,8 +78,8 @@ public class QueryInParkStatus implements Callable<String>{
 			PreparedStatement pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, ID);
 			ResultSet rs=pstmt.executeQuery();
+			parkStatus = new ParkStatus();
 			while(rs.next()) {
-				parkStatus = new ParkStatus();
 				parkStatus.setId(rs.getInt("id"));
 				parkStatus.setBlank(rs.getInt("blank"));
 				parkStatus.setLocked(rs.getInt("locked"));

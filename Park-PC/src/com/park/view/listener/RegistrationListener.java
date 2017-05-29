@@ -38,8 +38,10 @@ public class RegistrationListener implements ActionListener {
 			String phone = this.registrationView.getTextfield3().getText().trim();
 			String passwd1 = new String(this.registrationView.getPassword1().getPassword()).trim();
 			String passwd2 = new String(this.registrationView.getPassword2().getPassword()).trim();
+			String address = this.registrationView.getTextfield4().getText().trim();
+			String remark = this.registrationView.getTextfield5().getText().trim();
 			
-			if(parkName.equals("")||phone.equals("")||passwd1.equals("")||passwd2.equals("")) {
+			if(parkName.equals("")||phone.equals("")||passwd1.equals("")||passwd2.equals("")||address.equals("")||remark.equals("")) {
 				JOptionPane.showMessageDialog(null,"请输入完整信息", "ERROR",  JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -61,6 +63,8 @@ public class RegistrationListener implements ActionListener {
 			message.setParkName(parkName);
 			message.setPassword(passwd1);
 			message.setTelephone(phone);
+			message.setAddress(address);
+			message.setRemark(remark);
 			
 			boolean result = new ConServer().conToServer(message);
 			if(result == true) {
@@ -70,7 +74,7 @@ public class RegistrationListener implements ActionListener {
 				JOptionPane.showMessageDialog(null,"注册失败，未知错误", "ERROR",  JOptionPane.ERROR_MESSAGE);
 			}
 			
-			System.out.println(parkId+ "-----"+parkName + "---" + phone+ "---"+passwd1 + "---" + passwd2);
+			System.out.println(parkId+ "-----"+parkName + "---" + phone+ "---"+passwd1 + "---" + passwd2 + "----" + address + "---" + remark);
 			
 		}
 		

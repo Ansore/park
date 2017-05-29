@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.sql.Timestamp;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -14,6 +15,7 @@ import com.park.db.QueryTimestampOnly;
 import com.park.enity.ParkInfo;
 import com.park.enity.ParkStatus;
 import com.park.util.TimeMinus;
+import com.park.view.listener.ParkStatusListener;
 
 public class ParkStatuView extends JPanel {
 	
@@ -24,7 +26,7 @@ public class ParkStatuView extends JPanel {
 		ParkInfo parkInfo=null;
 		
 			this.setLayout(null);
-			this.setBounds(location,0,220,275);//255
+			this.setBounds(location,0,220,300);//255
 			this.setBackground(new Color(225,215,0));
 			
 			//顶部显示车位序号的标签
@@ -142,6 +144,7 @@ public class ParkStatuView extends JPanel {
 			timeTextJLabel.setBackground(new Color(225,215,0));
 			
 			
+			
 			//向总面板上添加组件
 			
 			this.add(textJlJLabel);
@@ -154,6 +157,66 @@ public class ParkStatuView extends JPanel {
 			this.add(phoneNum);
 			this.add(plateLabel);
 			this.add(plate);
+			
+			
+			//按钮
+			//预约按钮
+			JButton orderPark=null;
+			//解锁
+			JButton unlockPark=null;
+			//锁定
+			JButton lockPark = null;
+			//结束停车按钮
+			JButton endPark=null;
+			//监听器
+			ParkStatusListener parkStatusListener = new ParkStatusListener(parkStatus);
+			
+			if(parkStatus.getOrdered()==1) {
+				unlockPark = new JButton("解锁车位");
+				lockPark = new JButton("锁定车位");
+				endPark = new JButton("结束停车");
+				
+				unlockPark.setFocusPainted(false);
+				unlockPark.setForeground(Color.white);
+				unlockPark.setBorder(null);
+				unlockPark.setBackground(Color.GREEN);
+				unlockPark.setBounds(0, 280, 73, 25);
+				unlockPark.setActionCommand("unlock");
+				unlockPark.addActionListener(parkStatusListener);
+
+				lockPark.setFocusPainted(false);
+				lockPark.setForeground(Color.white);
+				lockPark.setBorder(null);
+				lockPark.setBackground(Color.RED);
+				lockPark.setBounds(73, 280, 73, 25);
+				lockPark.setActionCommand("lock");
+				lockPark.addActionListener(parkStatusListener);
+				
+				endPark.setFocusPainted(false);
+				endPark.setForeground(Color.white);
+				endPark.setBorder(null);
+				endPark.setBackground(Color.GRAY);
+				endPark.setBounds(146, 280, 74, 25);
+				endPark.setActionCommand("end");
+				endPark.addActionListener(parkStatusListener);
+				
+				this.add(unlockPark);
+				this.add(lockPark);
+				this.add(endPark);
+				
+				
+			} else {
+				orderPark = new JButton("预约停车");
+				
+				orderPark.setFocusPainted(false);
+				orderPark.setForeground(Color.white);
+				orderPark.setBorder(null);
+				orderPark.setBackground(Color.BLUE);
+				orderPark.setBounds(0, 280, 220, 25);
+				orderPark.setActionCommand("order");
+				orderPark.addActionListener(parkStatusListener);
+				this.add(orderPark);
+			}
 	}
 
 }

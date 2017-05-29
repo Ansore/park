@@ -8,7 +8,7 @@ package com.park.data;
 public interface Data {
 
     /**
-     * PC交互常量
+     * PC&服务器交互常量
      *
      */
     //登录
@@ -38,5 +38,11 @@ public interface Data {
     public int Answer = 20;
     //获取预定信息
     public int GetOrderInfoPC = 8;
+    
+    //服务器 -> PC
+    //车位指示灯亮
+    public int LEDOn = 12;
+    //车位指示灯灭
+    public int LEDOff = 13;
 
 }

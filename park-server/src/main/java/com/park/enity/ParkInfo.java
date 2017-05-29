@@ -11,9 +11,27 @@ public class ParkInfo {
     private String password;
     private String name;
     private String telephone;
+    private String address;
+    private String remark;
 
     //是否连上服务器 true 是   false 否
     private boolean alive;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public boolean isAlive() {
         return alive;

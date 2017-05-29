@@ -23,6 +23,8 @@ import com.park.db.UpdateThreadParkStatusOrder;
 import com.park.dto.Message;
 import com.park.enity.ParkStatus;
 import com.park.tools.ThreadManage;
+import com.park.util.ParkControlUtil;
+import com.park.util.ParkUtil;
 import com.park.util.TimeMinus;
 import com.park.view.Park;
 
@@ -69,6 +71,7 @@ public class ConServerThread extends Thread {
 				case Data.GetParkInfo:
 					List<ParkStatus> l = new QueryInParkStatus().callAll();
 					Message m = new Message();
+					m.setStatu(true);
 					m.setMessageType(Data.Answer);
 					m.setParkList(l);
 					SendMessage(m);
@@ -77,52 +80,33 @@ public class ConServerThread extends Thread {
 				//结束停车
 				case Data.EndParkInfo:
 					Message message2 = new Message();
-					if(new QueryInParkStatus().callParkStatus().getBlank()==1) {
+					if((new QueryInParkStatus().callParkStatus()).getBlank()==1) {
 						message2.setStatu(false);
 						SendMessage(message2);
 					}
 					else {
-						QueryTimestampOnly queryThread1=new QueryTimestampOnly(message.getParkId());
-					 	Timestamp timestamp=queryThread1.call();
-					 	if(timestamp!=null){
-					 	System.out.println(timestamp);
-					 	}
-					 	//更改车位状态
-					 	new UpdateInParkStatusLockedOnly(message.getParkId(), 0).start();
-					 	new UpdateThreadParkStatusOrder(message.getParkId(),0).start();
-					 	//删除停车信息表信息
-					 	new DeleteThreadInParkInfo(message.getParkId()).start();
-						//计算时间
-						long minutes=new TimeMinus().minus(timestamp);
+						
+						double payNum = ParkUtil.endPark(message.getParkId());
 						message2.setStatu(true);
 						message2.setMessageType(Data.Answer);
-						System.out.println("停车时间为："+minutes);
-						message2.setPayNum((double)(minutes*1.0/60)*ParkData.ParkNum);
-						System.out.println("结束停车,费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum);
-						JOptionPane.showMessageDialog(null,"车位号："+message.getParkId()+" 已结束停车 停车费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum+"元\n", "停车结束",  JOptionPane.YES_OPTION); 
-					 	Park.park.getDailyPanel().getText().append(new Date()+":车位号："+message.getParkId()+" 已结束停车 停车费用为："+(double)(minutes*1.0/60)*ParkData.ParkNum+"元\n");
+						message2.setPayNum(payNum);
+						
 						SendMessage(message2);
-						if(ThreadManage.ClientThread.size()!=0)
-						ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 0");
 					}
 					break;
 				//处理预约信息
 				case Data.OrderInfo:
 					Message message3 = new Message();
-					Park.park.getDailyPanel().getText().append(new Date()+":车牌号： "+message.getPalte()+" 预约了"+message.getParkId()+"号车位\n");
-					//添加预约信息
-					new InsertThreadInParkInfo(message.getParkId(), message.getPalte(), message.getTelephone(), 0).start();
-					//更改车位状态
-					new UpdateInParkStatusLockedOnly(message.getParkId(), 1).start();
-					new UpdateThreadParkStatusOrder(message.getParkId(),1).start();
-					
-					if(ThreadManage.ClientThread.size()!=0)
-					ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 1");
-					
-					message3.setMessageType(Data.Answer);
-					message3.setStatu(true);
+					if(ParkUtil.orderSpace(message.getPalte(), message.getParkId(), message.getTelephone())==false) {
+						message3.setMessageType(Data.Answer);
+						message3.setStatu(false);
+					} else {
+						message3.setMessageType(Data.Answer);
+						message3.setStatu(true);
+					}
 					SendMessage(message3);
 					break;
+					
 				//处理获取预约信息
 				case Data.GetOrderInfoPC:
 					Message message4 = new Message();
@@ -136,20 +120,65 @@ public class ConServerThread extends Thread {
 					
 				//锁
 				case Data.Lock:
-					if(ThreadManage.ClientThread.size()!=0)
-					ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 1");
+					Message message5 = new Message();
+					if(ParkControlUtil.lockSpace(message.getParkId())==true) {
+						message5.setMessageType(Data.Answer);
+						message5.setStatu(true);
+					} else {
+						message5.setMessageType(Data.Answer);
+						message5.setStatu(false);
+					}
+					SendMessage(message5);
 					break;
 					
 				//解锁
 				case Data.Unlock:
-					if(ThreadManage.ClientThread.size()!=0) {
-						if(message.getParkId()==0) {
-							ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay main 1");
-						}
-						else {
-							ThreadManage.ClientThread.get(ParkData.HardWare).SenderMessages("control relay "+message.getParkId()+" 0");
-						}
+					Message message6 = new Message();
+					if(ParkControlUtil.unlockSpace(message.getParkId())==true) {
+						message6.setMessageType(Data.Answer);
+						message6.setStatu(true);
+					} else {
+						message6.setMessageType(Data.Answer);
+						message6.setStatu(false);
 					}
+					SendMessage(message6);
+					break;
+					
+					//LED
+				case Data.LEDOn: 
+					Message message7 = new Message();
+					if(ParkControlUtil.onLED(message.getParkId())==true) {
+						message7.setMessageType(Data.Answer);
+						message7.setStatu(true);
+						new Runnable() {
+							@Override
+							public void run() {
+								try {
+									Thread.sleep(360000);
+									ParkControlUtil.offLED(message.getParkId());
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}.run();
+					} else {
+						message7.setMessageType(Data.Answer);
+						message7.setStatu(false);
+					}
+					SendMessage(message7);
+					break;
+					
+				case Data.LEDOff: 
+					Message message8 = new Message();
+					if(ParkControlUtil.offLED(message.getParkId())==true) {
+						message8.setMessageType(Data.Answer);
+						message8.setStatu(true);
+					} else {
+						message8.setMessageType(Data.Answer);
+						message8.setStatu(false);
+					}
+					SendMessage(message8);
 					break;
 				}
 				

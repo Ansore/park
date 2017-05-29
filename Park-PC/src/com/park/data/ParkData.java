@@ -7,4 +7,6 @@ public class ParkData {
 	public static String Phone = "";
 	public static double ParkNum = 4;
 	public static String HardWare = "";
+	public static String parkAddress = "";
+	public static String parkRemark = "";
 }

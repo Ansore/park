@@ -5,6 +5,8 @@ package com.park.exception;
  * Created by ansore on 16-9-12.
  */
 public enum StatusEnum {
+    FAILED(-1,"失败"),
+    SUCCESS(0,"成功"),
     SERVERERROR(100,"服务器错误"),
     ERORR(101,"未知错误"),
     VALUENOTCOMPLETE(102,"参数不齐全"),

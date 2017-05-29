@@ -59,6 +59,8 @@ public class ConServer {
 					System.out.println("登录成功");
 					Park.park.getDailyPanel().getText().append(new Date().getTime()+"  登陆成功\n");
 					ParkData.ParkName = message.getParkName();
+					ParkData.parkAddress = message.getAddress();
+					ParkData.parkRemark = message.getRemark();
 					ConServerThread conServerThread = new ConServerThread(socket);
 					conServerThread.start();
 					ThreadManage.ServerThread.put("server", conServerThread);

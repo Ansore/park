@@ -5,6 +5,7 @@ package com.park.vo;
  * Created by ansore on 16-9-12.
  */
 public class LoginVo extends CommonVo {
+
     private String telephone;
     private String password;
 

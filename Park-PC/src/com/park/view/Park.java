@@ -320,7 +320,7 @@ public class Park extends JFrame implements Runnable {
 		while (true) {
 			try {
 				SwingUtilities.invokeLater(runnable);
-				Thread.sleep(2000);
+				Thread.sleep(5000);
 				Park.park.getStatePanel().repaint();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

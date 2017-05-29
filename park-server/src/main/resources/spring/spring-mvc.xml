@@ -13,4 +13,6 @@
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    <!--静态资源-->
+    <mvc:resources mapping="/resources/**" location="/resources"/>
 </beans>

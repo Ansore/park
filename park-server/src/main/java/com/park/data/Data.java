@@ -41,6 +41,12 @@ public interface Data {
     //获取预定信息
     public int GetOrderInfoPC = 8;
 
+    //服务器 -> PC
+    //车位指示灯亮
+    public int LEDOn = 12;
+    //车位指示灯灭
+    public int LEDOff = 13;
+
 
 
     /**
@@ -69,4 +75,9 @@ public interface Data {
     public String EndPark = "endPark";
     //模拟支付
     public String PayMoney = "payMoney";
+    //LED
+    //LED关闭
+    public String offLED = "offLED";
+    //LED开启
+    public String onLED = "onLED";
 }

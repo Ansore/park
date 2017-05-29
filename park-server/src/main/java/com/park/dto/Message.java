@@ -17,10 +17,13 @@ public class Message implements java.io.Serializable {
     private boolean statu;
 
     //注册
+    //预约时复用telephone
     private String telephone;
     private String userName;
     private String password;
     private String parkName;
+    private String address;
+    private String remark;
 
     //控制信息
     private String controlInfo;
@@ -31,7 +34,7 @@ public class Message implements java.io.Serializable {
     //预约信息
     //车牌
     private String palte;
-    //车位编号
+    //车位编号 / 注册时停车场ID
     private int parkId;
     //用户手机号   private String telephone;
 
@@ -40,7 +43,24 @@ public class Message implements java.io.Serializable {
     //费用
     private double payNum;
 
-    public String getControlInfo() {
+    
+    public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getControlInfo() {
         return controlInfo;
     }
 

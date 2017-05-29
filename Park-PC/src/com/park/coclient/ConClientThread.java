@@ -1,7 +1,7 @@
 package com.park.coclient;
 
 /*
- * 服务器接收与发送的线程
+ * 硬件接收与发送的线程
  */
 
 import java.io.BufferedReader;
@@ -72,7 +72,7 @@ public class ConClientThread extends Thread {
 			if(str[1]!=null)
 			switch(str[1]){
 			
-			case "hcsr":
+			case "space":
 				String i = new QueryInParkStatus(Integer.valueOf(str[2])).call();
 				//存在--改变状态
 				if(i.equals("1")) {

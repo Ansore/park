@@ -48,15 +48,17 @@ public class PhoneController {
     @ResponseBody
     public Result dealRequest(HttpServletRequest request, @RequestBody RequestVo requestVo){
 
-        Result result = new Result(false, StatusEnum.getStatusCode(101).getStatusInfo());
+        Result result = new Result(false, StatusEnum.getStatusCode(-1).getStatusInfo());
 
         if(request.getMethod().toLowerCase().equals("get")){
+            result.setStatus(false);
             result.setStatusInfo(StatusEnum.getStatusCode(103).getStatusInfo());
             return result;
         }
 
         //检测输入字段
         if(requestVo==null|| StringUtils.isEmpty(requestVo.getAction())) {
+            result.setStatus(false);
             result.setStatusInfo(StatusEnum.getStatusCode(102).getStatusInfo());
             return result;
         }
@@ -69,6 +71,7 @@ public class PhoneController {
             if(requestVo.getAction().equals(Data.Reg)) {
                 //检测输入字段
                 if(StringUtils.isEmpty(requestVo.getPalte())||StringUtils.isEmpty(requestVo.getUsername())||StringUtils.isEmpty(requestVo.getPassword())||StringUtils.isEmpty(requestVo.getTelephone())){
+                    result.setStatus(false);
                     result.setStatusInfo(StatusEnum.getStatusCode(102).getStatusInfo());
                     return result;
                 }
@@ -85,6 +88,7 @@ public class PhoneController {
                     result.setStatus(true);
                     result.setStatusInfo(StatusEnum.getStatusCode(201).getStatusInfo());
                 }
+                return result;
             }
 
             /**
@@ -109,6 +113,7 @@ public class PhoneController {
                     result.setStatus(true);
                     result.setStatusInfo(StatusEnum.getStatusCode(200).getStatusInfo());
                 }
+                return result;
             }
 
             /**
@@ -119,6 +124,13 @@ public class PhoneController {
                // result = new Result<ParkInfo>(false,StatusEnum.getStatusCode(101).getStatusInfo());
                 List<ParkInfo> l = parkService.getParksInfoList();
                 if(l!=null&&l.size()!=0) {
+                    for (ParkInfo parkInfo : l) {
+                        if(SocketThreadManage.socketThread.get(parkInfo.getParkid()) != null) {
+                            parkInfo.setAlive(true);
+                        } else {
+                            parkInfo.setAlive(false);
+                        }
+                    }
                     result.setStatus(true);
                     result.setData(l);
                     result.setStatusInfo(StatusEnum.getStatusCode(202).getStatusInfo());
@@ -158,6 +170,7 @@ public class PhoneController {
 
                 //释放线程Message对象
                 SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                return result;
             }
 
             /**
@@ -201,6 +214,7 @@ public class PhoneController {
                 result.setStatusInfo(StatusEnum.getStatusCode(205).getStatusInfo());
                 //释放线程Message对象
                 SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                return result;
             }
 
             /**
@@ -248,6 +262,7 @@ public class PhoneController {
                 result.setStatusInfo(StatusEnum.getStatusCode(205).getStatusInfo());
                 //释放线程Message对象
                 SocketThreadManage.socketThread.get(parkid).freeMessage();
+                return result;
             }
 
             /**
@@ -269,9 +284,17 @@ public class PhoneController {
                 Message message = new Message();
                 message.setMessageType(Data.Unlock);
                 message.setParkId(0);
-                SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessage(message);
+                Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
+                if(m == null || m.getStatu() == false) {
+                    result.setStatus(false);
+                    result.setStatusInfo(StatusEnum.getStatusCode(-1).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                    return result;
+                }
                 result.setStatus(true);
                 result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
+                SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                return result;
             }
 
             /**
@@ -289,9 +312,17 @@ public class PhoneController {
                     Message message = new Message();
                     message.setMessageType(Data.Unlock);
                     message.setParkId(requestVo.getSpaceId());
-                    SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessage(message);
+                    Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
+                    if(m == null || m.getStatu() == false) {
+                        SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                        result.setStatus(false);
+                        result.setStatusInfo(StatusEnum.getStatusCode(-1).getStatusInfo());
+                        return result;
+                    }
                     result.setStatus(true);
                     result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                    return result;
                 }
                 else {
                     result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
@@ -318,9 +349,83 @@ public class PhoneController {
                     Message message = new Message();
                     message.setMessageType(Data.Lock);
                     message.setParkId(requestVo.getSpaceId());
-                    SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessage(message);
+                    Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
+                    if(m == null || m.getStatu() == false) {
+                        SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                        result.setStatus(false);
+                        result.setStatusInfo(StatusEnum.getStatusCode(-1).getStatusInfo());
+                        return result;
+                    }
                     result.setStatus(true);
                     result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                    return result;
+                }
+                else {
+                    result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
+                    return result;
+                }
+            }
+
+            //关闭LED
+            if(requestVo.getAction().equals(Data.offLED)) {
+                //检测输入字段
+                if(StringUtils.isEmpty(requestVo.getParkId())||StringUtils.isEmpty(requestVo.getSpaceId())) {
+                    result.setStatusInfo(StatusEnum.getStatusCode(102).getStatusInfo());
+                    return result;
+                }
+                if(SocketThreadManage.socketThread.get(requestVo.getParkId())==null) {
+                    result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
+                    return result;
+                }
+                if(SocketThreadManage.socketThread.get(requestVo.getParkId())!=null) {
+                    Message message = new Message();
+                    message.setMessageType(Data.LEDOff);
+                    message.setParkId(requestVo.getSpaceId());
+                    Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
+                    if(m == null || m.getStatu() == false) {
+                        result.setStatus(false);
+                        result.setStatusInfo(StatusEnum.getStatusCode(-1).getStatusInfo());
+                        SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                        return result;
+                    }
+                    result.setStatus(true);
+                    result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                    return result;
+                }
+                else {
+                    result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
+                    return result;
+                }
+            }
+
+            //开启LED
+            if(requestVo.getAction().equals(Data.offLED)) {
+                //检测输入字段
+                if(StringUtils.isEmpty(requestVo.getParkId())||StringUtils.isEmpty(requestVo.getSpaceId())) {
+                    result.setStatusInfo(StatusEnum.getStatusCode(102).getStatusInfo());
+                    return result;
+                }
+                if(SocketThreadManage.socketThread.get(requestVo.getParkId())==null) {
+                    result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
+                    return result;
+                }
+                if(SocketThreadManage.socketThread.get(requestVo.getParkId())!=null) {
+                    Message message = new Message();
+                    message.setMessageType(Data.LEDOn);
+                    message.setParkId(requestVo.getSpaceId());
+                    Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
+                    if(m == null || m.getStatu() != true) {
+                        result.setStatus(false);
+                        result.setStatusInfo(StatusEnum.getStatusCode(-1).getStatusInfo());
+                        SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                        return result;
+                    }
+                    result.setStatus(true);
+                    result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                    return result;
                 }
                 else {
                     result.setStatusInfo(StatusEnum.getStatusCode(104).getStatusInfo());
@@ -350,7 +455,9 @@ public class PhoneController {
                 message.setParkId(requestVo.getSpaceId());
                 Message m = SocketThreadManage.socketThread.get(requestVo.getParkId()).sendMessageWait(message);
                 if(m == null||m.getStatu()!=true) {
+                    result.setStatus(false);
                     result.setStatusInfo(StatusEnum.getStatusCode(105).getStatusInfo());
+                    SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
                     return result;
                 }
                 orderInfoDAO.delOrderInfo(requestVo.getTelephone());
@@ -359,6 +466,7 @@ public class PhoneController {
                 result.setStatusInfo(StatusEnum.getStatusCode(204).getStatusInfo());
                 //释放线程Message对象
                 SocketThreadManage.socketThread.get(requestVo.getParkId()).freeMessage();
+                return result;
             }
 
             /**

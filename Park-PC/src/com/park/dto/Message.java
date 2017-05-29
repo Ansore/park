@@ -21,6 +21,8 @@ public class Message implements java.io.Serializable {
     private String userName;
     private String password;
     private String parkName;
+    private String address;
+    private String remark;
 
     //控制信息
     private String controlInfo;
@@ -40,7 +42,24 @@ public class Message implements java.io.Serializable {
     //费用
     private double payNum;
 
-    public String getControlInfo() {
+    
+    public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getControlInfo() {
         return controlInfo;
     }
 

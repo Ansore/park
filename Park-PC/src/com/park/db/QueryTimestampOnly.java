@@ -19,7 +19,7 @@ public class QueryTimestampOnly  implements Callable<Timestamp>{
 	
 	public Timestamp call(){
 		Connection conn=DButil.open();
-    	String sql="select *from parkinfo where parkid=?";
+    	String sql="select * from parkinfo where parkid=?";
     	try {
 			PreparedStatement pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1,parkId);	

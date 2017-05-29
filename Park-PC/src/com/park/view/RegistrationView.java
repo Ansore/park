@@ -23,13 +23,17 @@ public class RegistrationView extends JFrame {
 	private JLabel label2=new JLabel("注册ID(数字):");
 	private JLabel label3=new JLabel("停车场名称:");
 	private JLabel label4=new JLabel("电话号码:");
-	private JLabel label5=new JLabel("密码:");
-	private JLabel label6=new JLabel("确认密码:");
-	private JLabel[] a={label2,label3,label4,label5,label6};
+	private JLabel label5=new JLabel("地址:");
+	private JLabel label6=new JLabel("说明:");
+	private JLabel label7=new JLabel("密码:");
+	private JLabel label8=new JLabel("确认密码:");
+	private JLabel[] a={label2,label3,label4,label5,label6,label7,label8};
 	private JTextField textfield1=new JTextField();
 	private JTextField textfield2=new JTextField();
 	private JTextField textfield3=new JTextField();
-	private JTextField[] b={textfield1,textfield2,textfield3};
+	private JTextField textfield4=new JTextField();
+	private JTextField textfield5=new JTextField();
+	private JTextField[] b={textfield1,textfield2,textfield3,textfield4,textfield5};
 	private JPasswordField password1=new JPasswordField();
 	private JPasswordField password2=new JPasswordField();
 	private JButton button1=new JButton("确认");
@@ -101,6 +105,16 @@ public class RegistrationView extends JFrame {
 	public JTextField getTextfield3() {
 		return textfield3;
 	}
+
+	public JTextField getTextfield4() {
+		return textfield4;
+	}
+
+
+	public JTextField getTextfield5() {
+		return textfield5;
+	}
+
 
 	public JPasswordField getPassword1() {
 		return password1;
